@@ -1,0 +1,12 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx serve -p 8000 -s ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

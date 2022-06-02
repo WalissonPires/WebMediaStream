@@ -1,0 +1,14 @@
+.app {
+    padding: 20px;
+}
+
+video {
+    width: 80%;
+    max-width: 500px;
+}
+
+.app-player {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
