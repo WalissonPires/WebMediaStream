@@ -12,8 +12,16 @@ window.addEventListener('load', () => {
 
 async function loadMedias() {
 
-    const response = await fetch(apiUrl + '/media');
-    if (response.status !== 200) {
+    let response = null;
+
+    try {
+        response = await fetch(apiUrl + '/media');
+        if (response.status !== 200) {
+            $('.app-list').html(`<div class="alert alert-danger">Falha ao baixar lista de midias</div>`);
+            return;
+        }
+    }
+    catch(error) {
         $('.app-list').html(`<div class="alert alert-danger">Falha ao baixar lista de midias</div>`);
         return;
     }
@@ -66,10 +74,18 @@ async function handleUpload(event) {
     for (const file of files)
         formData.append('files', file);
 
-    const response = await fetch(apiUrl + '/media/upload', {
-        method: 'POST',
-        body: formData
-    });
+    let response = null;
+
+    try {
+        response = await fetch(apiUrl + '/media/upload', {
+            method: 'POST',
+            body: formData
+        });
+    }
+    catch(error) {
+        alert('Falha ao enviar arquivo');
+        return;
+    }
 
     if (response.status !== 200) {
         alert('Falha ao enviar arquivos');
