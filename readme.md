@@ -7,6 +7,9 @@ Instalar o **Node.JS** e **.NET 6+**. Executar os comandos abaixo:
 ```bash
 cd api-node
 npm install
+
+mkdir out/medias
+mkdir out/pictures
 ```
 
 ## Executar Projeto
