@@ -2,8 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const musicMetadata = require('music-metadata');
-const { createPartialContentHandler } = require("express-partial-content");
-const { fileContentProvider } = require("./file-content-provider");
+const { createPartialContentHandler, ContentDoesNotExistError } = require("express-partial-content");
 
 
 const mediaPath = path.resolve( __dirname, '..', 'out', 'medias');
@@ -29,7 +28,39 @@ const getAllMedias = async (req, res) => {
     }
 }
 
-const getMedia = createPartialContentHandler(fileContentProvider, console)
+const getMedia = createPartialContentHandler(async (req, res) => {
+
+    // Read file name from route params.
+    const fileName = req.params.name;
+    const file = path.resolve(mediaPath, fileName);
+    console.log(`filename: ${file}`);
+
+    if (!fs.existsSync(file)) {
+        throw new ContentDoesNotExistError(`File doesn't exist: ${file}`);
+    }
+
+    const stats = fs.statSync(file);
+    const totalSize = stats.size;
+    const mimeType = "application/octet-stream";
+
+    const getStream = (range) => {
+        if (!range) {
+            // Request if for complete content.
+            return fs.createReadStream(file);
+        }
+        // Partial content request.
+        const { start, end } = range;
+        console.log(`${file} start: ${start}, end: ${end}`);
+        return fs.createReadStream(file, { start, end });
+    };
+
+    return {
+        fileName,
+        totalSize,
+        mimeType,
+        getStream
+    };
+}, console);
 
 const getMediaThumbnail = (req, res) => {
 
@@ -84,7 +115,7 @@ const mapFilenameToMedia = async (filename) => {
         duration: metadata.duration,
         artist: metadata.artist,
         title: metadata.title,
-        thumbnailLink: `media/${filename}/thumbnail`,
+        thumbnailLink: metadata.thumbnaiName ? `media/${filename}/thumbnail` : null,
     };
 }
 
