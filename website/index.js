@@ -32,7 +32,20 @@ async function loadMedias() {
 
     for (const item of data) {
 
-        const $item = $(`<div class="list-group-item list-group-item-action">${item.name}</div>`);
+        const description = [ item.title, item.artist ?? '', item.album ?? '' ].join(' - ');
+
+        const $item = $(`
+            <div class="list-group-item list-group-item-action">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        ${item.thumbnailLink ? `<img height="50" src="${apiUrl + '/' + item.thumbnailLink}">` : getImageSvg()}
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5 class="mt-0">${item.name}</h5>
+                        ${description}
+                    </div>
+                </div>
+            </div>`);
         $item.on('click', handleItemClick.bind(null, item));
 
         $listItem.append($item);
@@ -40,6 +53,12 @@ async function loadMedias() {
 
     $('.app-list').empty().append($listItem);
 }
+
+function getImageSvg() {
+
+    return `<svg class="bd-placeholder-img" width="50" height="50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#e5e5e5"></rect><text x="50%" y="50%" fill="#999" dy=".3em">Image</text></svg>`;
+}
+
 
 function handleItemClick(media) {
 
